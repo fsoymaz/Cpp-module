@@ -1,4 +1,4 @@
-NAME = Btc
+NAME = PmergeMe
 
 CC = c++
 

@@ -1,67 +1,74 @@
 #include "RPN.hpp"
+#include <sstream>
+#include <cctype>
+#include <iostream>
 
-int RPN::Calculator(int s1, int s2, char op)
+RPN::RPN() {}
+
+RPN::~RPN() {}
+
+bool RPN::isOperator(char c)
 {
-    if (op == '+')
-        return (s1 + s2);
-    else if (op == '-')
-        return (s1 - s2);
-    else if (op == '*')
-        return (s1 * s2);
-    return (s1 / s2);
+	return (c == '+' || c == '-' || c == '*' || c == '/');
 }
 
-void RPN::start(std::string input)
+int RPN::performOperation(int a, int b, char op)
 {
-    unsigned long i = 0;
-    int tmp;
-    int op = 0;
-    int num = 0;
-    for (; i < input.length(); i++)
-    {
-        if ((input.at(i) == '+' || input.at(i) == '-' || input.at(i) == '*' || input.at(i) == '/') && _res.size() == 0)
-        {
-            op++;
-            if (_vals.size() < 2)
-                throw std::exception();
-            else if (input.at(i) == '+')
-                tmp = Calculator(_vals.at(_vals.size() - 2), _vals.at(_vals.size() - 1), '+');
-            else if (input.at(i) == '-')
-                tmp = Calculator(_vals.at(_vals.size() - 2), _vals.at(_vals.size() - 1), '-');
-            else if (input.at(i) == '*')
-                tmp = Calculator(_vals.at(_vals.size() - 2), _vals.at(_vals.size() - 1), '*');
-            else
-                tmp = Calculator(_vals.at(_vals.size() - 2), _vals.at(_vals.size() - 1), '/');
-            _vals.erase(_vals.end() - 1);
-            _vals.erase(_vals.end() - 1);
-            _res.push_back(tmp);
-        }
-        else if ((input.at(i) == '+' || input.at(i) == '-' || input.at(i) == '*' || input.at(i) == '/') && _res.size() != 0)
-        {
-            op++;
-            if (input.at(i) == '+')
-                tmp = Calculator(_res.at(0), _vals.at(_vals.size() - 1), '+');
-            else if (input.at(i) == '-')
-                tmp = Calculator(_res.at(0), _vals.at(_vals.size() - 1), '-');
-            else if (input.at(i) == '*')
-                tmp = Calculator(_res.at(0), _vals.at(_vals.size() - 1), '*');
-            else
-                tmp = Calculator(_res.at(0),_vals.at(_vals.size() - 1), '/');
-            _vals.erase(_vals.end() - 1);
-            _res.erase(_res.begin());
-            _res.push_back(tmp);
-        }
-        else if (input.at(i) == ' ') {}
-        else if (!isdigit(std::stoi(input.substr(i, 1))) || input.at(i) == '0')
-        {
-            _vals.push_back(std::stoi(input.substr(i, 1)));
-            num++;
-        }
-        else
-            throw std::exception();
-    }
-    if (num - 1 == op)
-        std::cout << _res.at(0) << std::endl;
-    else
-        throw std::exception();
+	switch (op)
+	{
+	case '+':
+		return a + b;
+	case '-':
+		return a - b;
+	case '*':
+		return a * b;
+	case '/':
+		if (b == 0)
+		{
+			throw std::runtime_error("Division by zero");
+		}
+		return a / b;
+	default:
+		throw std::runtime_error("Invalid operator");
+	}
+}
+
+
+int RPN::evaluate(const std::string &expression)
+{
+	std::stack<int> stack;
+	std::istringstream iss(expression);
+	std::string token;
+	
+	while (iss >> token)
+	{
+		if (token.size() == 1 && isOperator(token[0]))
+		{
+			if (stack.size() < 2)
+			{
+				throw std::runtime_error("Invalid expression");
+			}
+			int b = stack.top();
+			stack.pop();
+			int a = stack.top();
+			stack.pop();
+			int result = performOperation(a, b, token[0]);
+			stack.push(result);
+		}
+		else if (isdigit(token[0]))
+		{
+			stack.push(token[0] - '0');
+		}
+		else
+		{
+			throw std::runtime_error("Invalid character in expression");
+		}
+	}
+
+	if (stack.size() != 1)
+	{
+		throw std::runtime_error("Invalid expression");
+	}
+
+	return stack.top();
 }

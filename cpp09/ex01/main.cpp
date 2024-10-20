@@ -1,20 +1,22 @@
+#include <iostream>
+#include <string>
 #include "RPN.hpp"
 
-int main(int ac, char **ag)
-{
-    if(ac == 2)
-    {
-        try
-        {
-            RPN a;
-            a.start(ag[1]);
-        }
-        catch(std::exception &s)
-        {
-            std::cerr << "Error" << std::endl;
-        }
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        std::cerr << "Error: Invalid number of arguments" << std::endl;
+        return 1;
     }
-    else
-        std::cerr << "Error" << std::endl;
-    
+
+    std::string expression = argv[1];
+    try {
+        RPN calculator;
+        int result = calculator.evaluate(expression);
+        std::cout << result << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
+
+    return 0;
 }

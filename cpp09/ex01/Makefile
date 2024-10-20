@@ -1,16 +1,16 @@
 NAME = RPN
+
 CC = c++
-CFLAGS = -Wall -Werror -Wextra -std=c++98
-SRC = main.cpp RPN.cpp
+
+SRC = $(wildcard *.cpp)
+FLAGS = -std=c++98 -Wall -Wextra -Werror
 
 all: $(NAME)
 
 $(NAME): $(SRC)
-	$(CC) $(CFLAGS) $(SRC) -o $(NAME)
-
-re: clean all
+	$(CC) $(FLAGS) $(SRC)  -o $(NAME)
 
 clean:
-	rm -f $(NAME)
+	$(RM) $(NAME)
 
-.PHONY: all clean re
+re: clean all

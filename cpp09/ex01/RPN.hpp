@@ -1,20 +1,19 @@
-#pragma once
+#ifndef RPN_HPP
+#define RPN_HPP
 
-#include <iostream>
-#include <algorithm>
-#include <fstream>
-#include <vector>
+#include <string>
+#include <stack>
+#include <stdexcept>
 
-class RPN
-{
-    private:
-        std::vector<int> _vals;
-        std::vector<int> _res;
+class RPN {
+public:
+    RPN();
+    ~RPN();
+    int evaluate(const std::string &expression);
 
-    protected:
-
-    public:
-        void start(std::string);
-        int Calculator(int, int, char);
-
+private:
+    bool isOperator(char c);
+    int performOperation(int a, int b, char op);
 };
+
+#endif
